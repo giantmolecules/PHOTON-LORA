@@ -12,6 +12,8 @@
 #define CLIENT_ADDRESS 1
 #define SERVER_ADDRESS 2
 
+#define STATUS_PIN 7
+
 // Singleton instance of the radio driver
 RH_RF95 driver;
 //RH_RF95 driver(5, 2); // Rocket Scream Mini Ultra Pro with the RFM95W
@@ -26,7 +28,7 @@ void setup()
 {
   // Rocket Scream Mini Ultra Pro with the RFM95W only:
   // Ensure serial flash is not interfering with radio communication on SPI bus
-//  pinMode(4, OUTPUT);
+  pinMode(STATUS_PIN, OUTPUT);
 //  digitalWrite(4, HIGH);
 
   Serial.begin(9600);
@@ -63,6 +65,7 @@ void loop()
   // Send a message to manager_server
   if (manager.sendtoWait(data, sizeof(data), SERVER_ADDRESS))
   {
+    blink();
     // Now wait for a reply from the server
     uint8_t len = sizeof(buf);
     uint8_t from;
@@ -81,4 +84,10 @@ void loop()
   else
     Serial.println("sendtoWait failed");
   delay(500);
+}
+
+void blink(){
+    digitalWrite(STATUS_PIN, HIGH);
+    delay(20);
+    digitalWrite(STATUS_PIN, LOW);
 }
